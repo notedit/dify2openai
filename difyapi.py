@@ -51,30 +51,32 @@ class AsyncDifyClient:
         for event in client.events():
             if event.event == "message":
                 data = json.loads(event.data)
-                yield {
-                    "choices": [
-                        {
-                            "delta": {
-                                "content": data['answer']
-                            },
-                            "finish_reason": None
-                        }
-                    ],
-                    "id": data['message_id'],
-                    "conversation_id": data['conversation_id'],
-                    "created": data['created_at']
-                }
-            elif event.event == "message_end":
-                data = json.loads(event.data)
-                yield {
-                    "choices": [
-                        {
-                            "delta": {},
-                            "finish_reason": "stop"
-                        }
-                    ],
-                    "id": data['id'],
-                    "conversation_id": data['conversation_id'],
-                    "usage": data['metadata']['usage']
-                }
-                break
+                if data['event'] == 'message':
+                    yield {
+                        "choices": [
+                            {
+                                "delta": {
+                                    "content": data['answer']
+                                },
+                                "finish_reason": None
+                            }
+                        ],
+                        "id": data['message_id'],
+                        "conversation_id": data['conversation_id'],
+                        "created": data['created_at']
+                    }
+                if data['event'] == 'message_end':
+                    yield {
+                        "choices": [
+                            {
+                                "delta": {},
+                                "finish_reason": "stop"
+                            }
+                        ],
+                        "id": data['id'],
+                        "conversation_id": data['conversation_id'],
+                        "usage": data['metadata']['usage']
+                    }
+                    break
+            else:
+                print(event)

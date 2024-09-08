@@ -19,7 +19,7 @@ DIFY_API_KEY = os.getenv("DIFY_API_KEY")
 TASK_CONVERSATION_MAP = {}
 
 async def chat_stream(client,messages, task_id, conversation_id):
-    async for chunk in client.chat_completion_stream(messages, conversation_id=conversation_id):
+    async for chunk in client.chat_completion_stream(messages, user=task_id, conversation_id=conversation_id):
         if task_id:
             conversation_id = TASK_CONVERSATION_MAP.get(task_id)
             if not conversation_id:
